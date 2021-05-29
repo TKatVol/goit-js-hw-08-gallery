@@ -15,6 +15,7 @@ refs.gallery.addEventListener('click', onImageClick);
 refs.lightboxCloseButton.addEventListener('click', onCloseButtonClick);
 refs.lightboxOverlay.addEventListener('click', onClickCloseLightbox);
 document.addEventListener('keydown', onEscKeyCloseLightbox);
+document.addEventListener('keydown', arrowKeysSlideshow);
 
 function createGalleryCard(images) {
   
@@ -43,6 +44,7 @@ function onImageClick(event) {
   refs.lightbox.classList.add('is-open');
   refs.lightboxImage.src = event.target.getAttribute('data-source');
   refs.lightboxImage.alt = event.target.getAttribute('alt');
+
 }
 
 function onCloseButtonClick(event) {
@@ -61,4 +63,32 @@ function onEscKeyCloseLightbox(event) {
   if (event.code === 'Escape') {
     onCloseButtonClick();
   }
+}
+
+function arrowKeysSlideshow(event) {
+  if (event.code !== 'ArrowRight' && event.code !== 'ArrowLeft') {
+    return;
+  }
+
+  const images = document.querySelectorAll('[data-source]');
+  const arrayImages = [];
+  let newIndex;
+  
+  images.forEach(images => arrayImages.push(images.dataset.source));
+  
+  const currentImage = refs.lightboxImage.src;
+  const currentId = arrayImages.indexOf(currentImage);
+
+  if (event.key === 'ArrowLeft') {
+    newIndex = currentId - 1;
+    if (newIndex == -1) {
+      newIndex = arrayImages.length - 1;
+    }
+  } else if (event.key === 'ArrowRight') {
+    newIndex = currentId + 1;
+    if (newIndex === arrayImages.length) {
+      newIndex = 0;
+    }
+  }
+  refs.lightboxImage.src = arrayImages[newIndex];
 }
